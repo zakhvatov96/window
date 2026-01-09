@@ -1,9 +1,14 @@
 import checkNumInputs from "./checkNumInputs";
+import { hideTabContent, showTabContent } from "./showAndHideTabContent";
 
 const forms = (state) => {
 	const form = document.querySelectorAll('form');
 	const inputs = document.querySelectorAll('input');
 	const modals = document.querySelectorAll('[data-modal]');
+	const calcContent = document.querySelectorAll('.big_img > img');
+	const calcTabs = document.querySelectorAll('.balcon_icons_img');
+	const calcType = document.querySelector('#view_type');
+	const calcProfile = document.querySelectorAll('.checkbox');
 
 	const message = {
 		loading: 'Загрузка...',
@@ -35,10 +40,14 @@ const forms = (state) => {
 		}
 	}
 
-	// const resetCalc = () => {
-	// 	hideTabContent();
-	// 	showTabContent(0);
-	// }
+	const resetCalc = () => {
+		hideTabContent(calcContent, calcTabs, 'do_image_more');
+		showTabContent(calcContent, calcTabs, 'do_image_more', 0, 'inline-block');
+		calcType.value = 'tree';
+		calcProfile.forEach(box => {
+			box.checked = false
+		})
+	}
 
 	form.forEach(item => {
 		item.addEventListener('submit', (e) => {
@@ -72,7 +81,7 @@ const forms = (state) => {
 					statusMessage.remove();
 				}, 3000);
 				clearState();
-				// resetCalc();
+				resetCalc();
 			})
 		})
 	})

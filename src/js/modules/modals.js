@@ -1,19 +1,34 @@
-const modals = () => {
+const modals = (state) => {
 	function bindModal (triggerSelector, modalSelector, closeSelector, closeClickOverlay = true) {
 		const trigger = document.querySelectorAll(triggerSelector),
 			  modal = document.querySelector(modalSelector),
 			  close = document.querySelector(closeSelector),
 			  windows = document.querySelectorAll('[data-modal]');
 
+		function showStatusMessage(parent) {
+			const statusMessage = document.createElement('div');
+
+			statusMessage.classList.add('status');
+			statusMessage.textContent = 'Введите все данные';
+			parent.append(statusMessage);
+			setTimeout(()=>{
+				statusMessage.remove()
+			}, 1000);
+		}
+
 		trigger.forEach(item => {
 			item.addEventListener('click', (e) => {
 				if(e.target) {
 					e.preventDefault();
-					windows.forEach(item => {
+					if(e.target.getAttribute('data-call') || (e.target.getAttribute('data-next') === 'first' && Object.entries(state).length === 3) || (e.target.getAttribute('data-next') === 'second' && Object.entries(state).length === 5)) {
+						windows.forEach(item => {
 						item.style.display = 'none';
-					})
-					modal.style.display = 'block';
-					document.body.style.overflow = 'hidden';
+						})
+						modal.style.display = 'block';
+						document.body.style.overflow = 'hidden';
+					} else {
+						showStatusMessage(e.target.parentElement);					
+					}
 				}
 			})
 		})
