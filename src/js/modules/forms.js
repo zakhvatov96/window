@@ -1,7 +1,9 @@
-const forms = () => {
+import checkNumInputs from "./checkNumInputs";
+
+const forms = (state) => {
 	const form = document.querySelectorAll('form');
 	const inputs = document.querySelectorAll('input');
-	const phoneInputs = document.querySelectorAll('input[name="user_phone"]');
+	const modals = document.querySelectorAll('[data-modal]');
 
 	const message = {
 		loading: 'Загрузка...',
@@ -9,11 +11,7 @@ const forms = () => {
 		failure: 'Что-то пошло не так...'
 	};
 
-	phoneInputs.forEach(item => {
-		item.addEventListener('input', () => {
-			item.value = item.value.replace(/\D/, '');
-		})
-	})
+	checkNumInputs('input[name="user_phone"]');
 
 	const postData = async (url, data) => {
 		document.querySelector('.status').textContent = message.loading;
@@ -31,6 +29,17 @@ const forms = () => {
 		})
 	}
 
+	const clearState = () => {
+		for(let prop of Object.keys(state)) {
+			delete state[prop];
+		}
+	}
+
+	// const resetCalc = () => {
+	// 	hideTabContent();
+	// 	showTabContent(0);
+	// }
+
 	form.forEach(item => {
 		item.addEventListener('submit', (e) => {
 			e.preventDefault();
@@ -39,18 +48,31 @@ const forms = () => {
 			item.appendChild(statusMessage);
 
 			const formData = new FormData(item);
+			if(item.getAttribute('data-form') === 'end') {
+				for(let key in state) {
+					formData.append(key, state[key]);
+				}
+			}
 
 			postData('assets/server.php', formData)
 			.then(res => {
 				console.log(res);
 				statusMessage.textContent = message.success;
+				modals.forEach(item => {
+					setTimeout(() => {
+						item.style.display = 'none';
+						document.body.style.overflow = '';
+					}, 5000);
+				})
 			})
 			.catch(res => statusMessage.textContent = message.failure)
 			.finally(res => {
 				clearInputs();
 				setTimeout(() => {
 					statusMessage.remove();
-				}, 5000)
+				}, 3000);
+				clearState();
+				// resetCalc();
 			})
 		})
 	})
