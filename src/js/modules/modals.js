@@ -3,7 +3,8 @@ const modals = (state) => {
 		const trigger = document.querySelectorAll(triggerSelector),
 			  modal = document.querySelector(modalSelector),
 			  close = document.querySelector(closeSelector),
-			  windows = document.querySelectorAll('[data-modal]');
+			  windows = document.querySelectorAll('[data-modal]'),
+			  scroll = calcScroll();
 
 		function showStatusMessage(parent) {
 			const statusMessage = document.createElement('div');
@@ -26,6 +27,7 @@ const modals = (state) => {
 						})
 						modal.style.display = 'block';
 						document.body.style.overflow = 'hidden';
+						document.body.style.marginRight = `${scroll}px`;
 					} else {
 						showStatusMessage(e.target.parentElement);					
 					}
@@ -39,6 +41,8 @@ const modals = (state) => {
 			})
 			modal.style.display = 'none';
 			document.body.style.overflow = '';
+			document.body.style.marginRight = '0px';
+
 		})
 
 		modal.addEventListener('click', (e) => {
@@ -48,6 +52,8 @@ const modals = (state) => {
 				})
 				modal.style.display = 'none';
 				document.body.style.overflow = '';
+				document.body.style.marginRight = '0px';
+	
 			}
 		})
 	}
@@ -57,7 +63,26 @@ const modals = (state) => {
 		setTimeout(function() {
 			modal.style.display = 'block';
 			document.body.style.overflow = 'hidden';
+			document.body.style.marginRight = `${scroll}px`;
+
 		}, time);
+	}
+
+	function calcScroll() {
+		const div = document.createElement('div');
+
+		div.style.width = '50px';
+		div.style.height = '50px';
+		div.style.overflowY = 'scroll';
+		div.style.visibility = 'hidden';
+
+		document.body.appendChild(div);
+
+		const scrollWidth = div.offsetWidth - div.clientWidth;
+
+		div.remove();
+
+		return scrollWidth;
 	}
 
 	bindModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close');
